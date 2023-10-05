@@ -39,14 +39,14 @@ app.get("/", async (request, response) => {
 
 app.post("/users/", async (request, response) => {
   const userDetails = request.body;
-  const { username, password } = userDetails;
+  const { username1, password1 } = userDetails;
   const addUserQuery = `
     INSERT INTO
       users (username,password)
     VALUES
       (
-        '${username}',
-        '${password}'
+        '${username1}',
+        '${password1}'
       );`;
 
   const dbResponse = await db.run(addUserQuery);
