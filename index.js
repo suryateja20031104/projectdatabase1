@@ -1,12 +1,13 @@
 const express = require("express");
 const path = require("path");
-
+const cors = require("cors");
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
 
 const app = express();
 const dbPath = path.join(__dirname, "userdetails.db");
 app.use(express.json());
+app.use(cors());
 let db = null;
 
 const initializeDBAndServer = async () => {
