@@ -71,7 +71,7 @@ app.get("/userConformation/", async (request, response) => {
 });
 
 app.get("/searchquery", async (request, response) => {
-  const { inputtext, selectext } = request.query;
+  const { inputtext="", selectext="" } = request.query;
   const getCount = `
   SELECT
     count(*) AS C
