@@ -3,7 +3,6 @@ const path = require("path");
 const cors = require("cors");
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
-
 const app = express();
 const dbPath = path.join(__dirname, "userdetails.db");
 app.use(express.json());
@@ -69,4 +68,60 @@ app.get("/userConformation/", async (request, response) => {
   } catch (error) {
     response.send("false");
   }
+});
+
+app.get("/searchquery", async (request, response) => {
+  const { inputtext, selectext } = request.query;
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const date = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+  });
+  const instquery = `
+          INSERT INTO searchqueries
+          (S_ID,S_Start_Time,Search_Param,Search_Value)
+          VALUES
+          ('${c + 1}','${date}','${selectext}','${inputtext}')
+      `;
+  const dbResponse1 = await db.run(instquery);
+  response.send("OK");
+});
+
+app.get("/getCountSearch", async (request, response) => {
+  const getSearchCount = `
+            SELECT
+                count(*) AS SC
+            FROM
+                searchqueries
+            WHERE
+            Nb_Status = 0
+            OR PC_Status = 0
+            OR KSC_Status = 0
+            OR BC_Status = 0
+            OR WC_Status = 0;
+        `;
+  const getCompSearchCount = `
+        SELECT
+            count(*) AS CSC
+        FROM
+            searchqueries
+        WHERE
+            Nb_Status = 1
+            AND PC_Status = 1
+            AND KSC_Status = 1
+            AND BC_Status = 1
+            AND WC_Status = 1;
+    `;
+  const searchResponse = await db.all(getSearchCount);
+  const searchComplete = await db.all(getCompSearchCount);
+  response.send({
+    searchResponse: searchResponse[0].SC,
+    searchComplete: searchComplete[0].CSC,
+  });
 });

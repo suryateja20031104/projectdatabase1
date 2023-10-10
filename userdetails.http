@@ -1,4 +1,4 @@
-GET http://localhost:3000/
+GET http://localhost:3000/searchquery
 
 ###
 
@@ -11,8 +11,10 @@ POST http://localhost:3000/users/
 Content-Type: application/json
 
 {
-  "username": "satish",
-  "password": "9966160639"
+  "username1": "rahul",
+  "password1": "rahul@1986"
 }
 
 ###
+
+GET http://localhost:3000/getCountSearch
