@@ -239,3 +239,22 @@ WHERE
   const Dresponse = await db.all(verify);
   response.send(Dresponse);
 });
+
+app.get("/getDet", async (request, response) => {
+  const askDet = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(askDet);
+  const c = dbResponse[0].C;
+  const getValues = `
+    SELECT Search_Param,Search_Value
+    FROM searchqueries
+    WHERE S_ID='${c}'
+  `;
+  const responseValues = await db.all(getValues);
+  const searchPram = responseValues[0].Search_Param;
+  const searchValue = responseValues[0].Search_Value;
+  response.send({ searchPram: searchPram, searchValue: searchValue });
+});
