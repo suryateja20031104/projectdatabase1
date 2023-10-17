@@ -71,7 +71,7 @@ app.get("/userConformation/", async (request, response) => {
 });
 
 app.get("/searchquery", async (request, response) => {
-  const { inputtext="", selectext="" } = request.query;
+  const { inputtext = "", selectext = "" } = request.query;
   const getCount = `
   SELECT
     count(*) AS C
@@ -124,4 +124,118 @@ app.get("/getCountSearch", async (request, response) => {
     searchResponse: searchResponse[0].SC,
     searchComplete: searchComplete[0].CSC,
   });
+});
+
+app.get("/pvtchat", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const date = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+  });
+  const instquery = `
+          INSERT INTO Private_Chat
+          (PC_ID,PC_Start_Time)
+          VALUES
+          ('${c}','${date}')
+      `;
+  const dbResponse1 = await db.run(instquery);
+  response.send("OK");
+});
+
+app.get("/p", async (request, response) => {
+  const getUserDetails = `
+    SELECT
+      *
+    FROM
+      Private_Chat
+    `;
+  const userArray = await db.all(getUserDetails);
+  response.send(userArray);
+});
+
+app.get("/bot1", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const getValues = `
+    SELECT Search_Param,Search_Value
+    FROM searchqueries
+    WHERE S_ID='${c}'
+  `;
+  const responseValues = await db.all(getValues);
+  const searchPram = responseValues[0].Search_Param;
+  const searchValue = responseValues[0].Search_Value;
+  const verify = `SELECT
+  ID1_Type,
+  ID2_Number
+FROM
+  KYC_DATA1
+WHERE
+  First_Name = '${searchValue}'`;
+  const Dresponse = await db.all(verify);
+  response.send(Dresponse);
+});
+
+app.get("/bot2", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const getValues = `
+    SELECT Search_Param,Search_Value
+    FROM searchqueries
+    WHERE S_ID='${c}'
+  `;
+  const responseValues = await db.all(getValues);
+  const searchPram = responseValues[0].Search_Param;
+  const searchValue = responseValues[0].Search_Value;
+  const verify = `SELECT
+  ID1_Type,
+  ID2_Number
+FROM
+  KYC_DATA2
+WHERE
+  First_Name = '${searchValue}'`;
+  const Dresponse = await db.all(verify);
+  response.send(Dresponse);
+});
+
+app.get("/bot3", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const getValues = `
+    SELECT Search_Param,Search_Value
+    FROM searchqueries
+    WHERE S_ID='${c}'
+  `;
+  const responseValues = await db.all(getValues);
+  const searchPram = responseValues[0].Search_Param;
+  const searchValue = responseValues[0].Search_Value;
+  const verify = `SELECT
+  ID1_Type,
+  ID2_Number
+FROM
+  KYC_DATA3
+WHERE
+  First_Name = '${searchValue}'`;
+  const Dresponse = await db.all(verify);
+  response.send(Dresponse);
 });

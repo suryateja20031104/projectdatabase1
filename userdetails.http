@@ -1,5 +1,4 @@
-GET http://localhost:3000/searchquery
-
+GET http://localhost:3000/
 ###
 
 GET http://localhost:3000/userConformation/?username=surya&password=123456789
