@@ -276,7 +276,7 @@ app.get("/storePvtchat", async (request, response) => {
   const instquery = `
           UPDATE Private_Chat
           SET PC_Status=1,PC_Chat_Log='${chatlog}',PC_End_Time='${date}'
-          WHERE PC_ID='${c}';
+          WHERE PC_ID=${c};
       `;
   const dbResponse1 = await db.run(instquery);
   response.send("OK");
