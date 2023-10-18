@@ -281,3 +281,14 @@ app.get("/storePvtchat", async (request, response) => {
   const dbResponse1 = await db.run(instquery);
   response.send("OK");
 });
+
+app.get("/gp", async (request, response) => {
+  const getUserDetails = `
+    SELECT
+      *
+    FROM
+      Private_Chat
+    `;
+  const userArray = await db.all(getUserDetails);
+  response.send(userArray);
+});
