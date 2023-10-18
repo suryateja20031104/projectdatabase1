@@ -258,3 +258,26 @@ app.get("/getDet", async (request, response) => {
   const searchValue = responseValues[0].Search_Value;
   response.send({ searchPram: searchPram, searchValue: searchValue });
 });
+
+app.get("/storePvtchat", async (request, response) => {
+  const { chatlog = "" } = request.query;
+
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const date = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+  });
+  const instquery = `
+          UPDATE Private_Chat
+          SET PC_Status=1,PC_Chat_Log='${chatlog}',PC_End_Time='${date}'
+          WHERE PC_ID='${c}';
+      `;
+  const dbResponse1 = await db.run(instquery);
+  response.send("OK");
+});
