@@ -308,5 +308,9 @@ app.get("/stage1", async (request, response) => {
           WHERE PC_ID=${c};
       `;
   const dbResponse1 = await db.all(instquery);
-  response.send({ status: dbResponse1[0].P });
+  if (dbResponse1[0].P === 1) {
+    response.send(true);
+  } else {
+    response.send(false);
+  }
 });
