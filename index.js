@@ -292,3 +292,21 @@ app.get("/gp", async (request, response) => {
   const userArray = await db.all(getUserDetails);
   response.send(userArray);
 });
+
+app.get("/stage1", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+
+  const instquery = `
+          SELECT PC_Status AS P
+          FROM Private_Chat
+          WHERE PC_ID=${c};
+      `;
+  const dbResponse1 = await db.all(instquery);
+  response.send({ status: dbResponse1[0].P });
+});
