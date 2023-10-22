@@ -308,9 +308,13 @@ app.get("/stage1", async (request, response) => {
           WHERE NB_ID=${c};
       `;
   const dbResponse1 = await db.all(instquery);
-  if (dbResponse1[0].P === 1) {
-    response.send(true);
-  } else {
+  if (dbResponse1.length === 0) {
     response.send(false);
+  } else if (dbResponse1.length !== 0) {
+    if (dbResponse1[0].P === 1) {
+      response.send(true);
+    } else {
+      response.send(false);
+    }
   }
 });
