@@ -126,7 +126,7 @@ app.get("/getCountSearch", async (request, response) => {
   });
 });
 
-app.get("/pvtchat", async (request, response) => {
+app.get("/networkbroadcast", async (request, response) => {
   const getCount = `
   SELECT
     count(*) AS C
@@ -139,8 +139,8 @@ app.get("/pvtchat", async (request, response) => {
     hour12: true,
   });
   const instquery = `
-          INSERT INTO Private_Chat
-          (PC_ID,PC_Start_Time)
+          INSERT INTO Network_Broadcast
+          (NB_ID,NB_Start_Time)
           VALUES
           ('${c}','${date}')
       `;
@@ -153,7 +153,7 @@ app.get("/p", async (request, response) => {
     SELECT
       *
     FROM
-      Private_Chat
+      Network_Broadcast
     `;
   const userArray = await db.all(getUserDetails);
   response.send(userArray);
@@ -259,7 +259,7 @@ app.get("/getDet", async (request, response) => {
   response.send({ searchPram: searchPram, searchValue: searchValue });
 });
 
-app.get("/storePvtchat", async (request, response) => {
+app.get("/storeNwtchat", async (request, response) => {
   const { chatlog = "" } = request.query;
 
   const getCount = `
@@ -274,9 +274,9 @@ app.get("/storePvtchat", async (request, response) => {
     hour12: true,
   });
   const instquery = `
-          UPDATE Private_Chat
-          SET PC_Status=1,PC_Chat_Log='${chatlog}',PC_End_Time='${date}'
-          WHERE PC_ID=${c};
+          UPDATE Network_Broadcast
+          SET NB_Status=1,NB_Chat_Log='${chatlog}',NB_End_Time='${date}'
+          WHERE NB_ID=${c};
       `;
   const dbResponse1 = await db.run(instquery);
   response.send("OK");
