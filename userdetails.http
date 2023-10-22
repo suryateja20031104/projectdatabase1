@@ -1,4 +1,4 @@
-GET http://localhost:3000/
+GET http://localhost:3000/p
 ###
 
 GET http://localhost:3000/userConformation/?username=surya&password=123456789
@@ -16,4 +16,4 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/getCountSearch
+GET http://localhost:3000/storeNwtchat/?chatlog=1234

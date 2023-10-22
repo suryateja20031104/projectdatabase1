@@ -303,9 +303,9 @@ app.get("/stage1", async (request, response) => {
   const c = dbResponse[0].C;
 
   const instquery = `
-          SELECT PC_Status AS P
-          FROM Private_Chat
-          WHERE PC_ID=${c};
+          SELECT NB_Status AS P
+          FROM Network_Broadcast
+          WHERE NB_ID=${c};
       `;
   const dbResponse1 = await db.all(instquery);
   if (dbResponse1[0].P === 1) {
