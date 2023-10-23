@@ -318,3 +318,42 @@ app.get("/stage1", async (request, response) => {
     }
   }
 });
+
+app.get("/verification", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const getValues = `
+    SELECT Search_Param,Search_Value
+    FROM searchqueries
+    WHERE S_ID='${c}'
+  `;
+  const responseValues = await db.all(getValues);
+  const searchPram = responseValues[0].Search_Param;
+  const searchValue = responseValues[0].Search_Value;
+  const verify = `SELECT
+  DOB,
+  Address1_State,
+  Address1_Country
+FROM
+  KYC_DATA2
+WHERE
+  First_Name = '${searchValue}'`;
+  const Dresponse = await db.all(verify);
+  const DOB = Dresponse[0].DOB;
+  const Address1_State = Dresponse[0].Address1_State;
+  const Address1_Country = Dresponse[0].Address1_Country;
+  if (Dresponse.length === 0) {
+    response.send(false);
+  } else {
+    response.send({
+      DOB: DOB,
+      Address1_State: Address1_State,
+      Address1_Country: Address1_Country,
+    });
+  }
+});
