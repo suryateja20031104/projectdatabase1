@@ -472,5 +472,66 @@ WHERE
   if (Address1_State === Address1_State1) addState = true;
   if (Address1_Country == Address1_Country1) addCount = true;
 
+  response.send({
+    DOB: DOB,
+    Address1_State: Address1_State,
+    Address1_Country: Address1_Country,
+    dob: dob,
+    addState: addState,
+    addCount: addCount,
+  });
+});
+
+app.get("/botVerify23", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const getValues = `
+    SELECT Search_Param,Search_Value
+    FROM searchqueries
+    WHERE S_ID='${c}'
+  `;
+  const responseValues = await db.all(getValues);
+  const searchPram = responseValues[0].Search_Param;
+  const searchValue = responseValues[0].Search_Value;
+  const verify1 = `SELECT
+  DOB,
+  Address1_State,
+  Address1_Country
+FROM
+  KYC_DATA2
+WHERE
+  First_Name = '${searchValue}'`;
+
+  const verify2 = `SELECT
+  DOB,
+  Address1_State,
+  Address1_Country
+FROM
+  KYC_DATA3
+WHERE
+  First_Name = '${searchValue}'`;
+
+  const Dresponse = await db.all(verify1);
+  const DOB = Dresponse[0].DOB;
+  const Address1_State = Dresponse[0].Address1_State;
+  const Address1_Country = Dresponse[0].Address1_Country;
+
+  const Dresponse1 = await db.all(verify2);
+  const DOB1 = Dresponse1[0].DOB;
+  const Address1_State1 = Dresponse1[0].Address1_State;
+  const Address1_Country1 = Dresponse1[0].Address1_Country;
+
+  let dob = false;
+  let addState = false;
+  let addCount = false;
+  if (DOB === DOB1) dob = true;
+  if (Address1_State === Address1_State1) addState = true;
+  if (Address1_Country == Address1_Country1) addCount = true;
+
   response.send({ dob: dob, addState: addState, addCount: addCount });
 });
