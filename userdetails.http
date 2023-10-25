@@ -1,4 +1,4 @@
-GET http://localhost:3000/p
+GET http://localhost:3000/botVerify12
 ###
 
 GET http://localhost:3000/userConformation/?username=surya&password=123456789

@@ -148,6 +148,28 @@ app.get("/networkbroadcast", async (request, response) => {
   response.send("OK");
 });
 
+app.get("/privatebroadcast", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const date = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+  });
+  const instquery = `
+          INSERT INTO Private_Chat
+          (PC_ID,PC_Start_Time)
+          VALUES
+          ('${c}','${date}')
+      `;
+  const dbResponse1 = await db.run(instquery);
+  response.send("OK");
+});
+
 app.get("/p", async (request, response) => {
   const getUserDetails = `
     SELECT
@@ -356,4 +378,100 @@ WHERE
       Address1_Country: Address1_Country,
     });
   }
+});
+
+app.get("/storePvtchat", async (request, response) => {
+  const { chatlog = "" } = request.query;
+
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const date = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+  });
+  const instquery = `
+          UPDATE Private_Chat
+          SET PC_Status=1,PC_Chat_Log='${chatlog}',PC_End_Time='${date}'
+          WHERE NB_ID=${c};
+      `;
+  const dbResponse1 = await db.run(instquery);
+  response.send("OK");
+});
+
+app.get("/getChatLog", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const details = `
+    SELECT NB_Chat_Log AS CL
+    FROM Network_Broadcast
+    WHERE NB_ID=${c};
+  `;
+  const dbLog = await db.all(details);
+  const arrayLog = dbLog[0].CL.split(" ");
+  response.send({ bot1: arrayLog[2], bot2: arrayLog[3], bot3: arrayLog[4] });
+});
+
+app.get("/botVerify12", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const getValues = `
+    SELECT Search_Param,Search_Value
+    FROM searchqueries
+    WHERE S_ID='${c}'
+  `;
+  const responseValues = await db.all(getValues);
+  const searchPram = responseValues[0].Search_Param;
+  const searchValue = responseValues[0].Search_Value;
+  const verify1 = `SELECT
+  DOB,
+  Address1_State,
+  Address1_Country
+FROM
+  KYC_DATA1
+WHERE
+  First_Name = '${searchValue}'`;
+
+  const verify2 = `SELECT
+  DOB,
+  Address1_State,
+  Address1_Country
+FROM
+  KYC_DATA2
+WHERE
+  First_Name = '${searchValue}'`;
+
+  const Dresponse = await db.all(verify1);
+  const DOB = Dresponse[0].DOB;
+  const Address1_State = Dresponse[0].Address1_State;
+  const Address1_Country = Dresponse[0].Address1_Country;
+
+  const Dresponse1 = await db.all(verify2);
+  const DOB1 = Dresponse1[0].DOB;
+  const Address1_State1 = Dresponse1[0].Address1_State;
+  const Address1_Country1 = Dresponse1[0].Address1_Country;
+
+  let dob = false;
+  let addState = false;
+  let addCount = false;
+  if (DOB === DOB1) dob = true;
+  if (Address1_State === Address1_State1) addState = true;
+  if (Address1_Country == Address1_Country1) addCount = true;
+
+  console.log(Dresponse, Dresponse1);
+  console.log(dob, addState, addCount);
 });
