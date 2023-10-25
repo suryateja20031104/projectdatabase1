@@ -472,6 +472,5 @@ WHERE
   if (Address1_State === Address1_State1) addState = true;
   if (Address1_Country == Address1_Country1) addCount = true;
 
-  console.log(Dresponse, Dresponse1);
-  console.log(dob, addState, addCount);
+  response.send({ dob: dob, addState: addState, addCount: addCount });
 });
