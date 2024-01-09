@@ -3,6 +3,7 @@ const path = require("path");
 const cors = require("cors");
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
+const CryptoJS = require("crypto-js");
 const app = express();
 const dbPath = path.join(__dirname, "userdetails.db");
 app.use(express.json());
@@ -400,6 +401,7 @@ app.get("/storePvtchat", async (request, response) => {
           WHERE PC_ID=${c};
       `;
   const dbResponse1 = await db.run(instquery);
+
   response.send("OK");
 });
 
@@ -623,4 +625,24 @@ app.get("/kycScore", async (request, response) => {
   const stateAvg = result[4] === "Yes" ? 100 : 0;
   const countryAvg = result[6] === "Yes" ? 100 : 0;
   response.send({ dobAvg: dobAvg, stateAvg: stateAvg, countryAvg: countryAvg });
+});
+
+app.get("/blockchainpart", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const chatDetails = `
+    SELECT *
+    FROM Private_Chat
+    WHERE PC_ID='${c}'
+  `;
+  const responseValues = await db.all(chatDetails);
+  const data = responseValues[0].PC_Chat_Log;
+  const encrypted = CryptoJS.SHA256(data).toString(CryptoJS.enc.Hex);
+  const Owner = responseValues[0].PC_Chat_Log.split(" ")[0];
+  response.send({ iD: c, chatData: encrypted, owner: Owner });
 });
