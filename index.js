@@ -624,6 +624,11 @@ app.get("/kycScore", async (request, response) => {
   const dobAvg = result[2] === "Yes" ? 100 : 0;
   const stateAvg = result[4] === "Yes" ? 100 : 0;
   const countryAvg = result[6] === "Yes" ? 100 : 0;
+
+  //   const date = new Date().toLocaleString("en-US", {
+  //     timeZone: "Asia/Kolkata",
+  //     hour12: true,
+  //   });
   response.send({ dobAvg: dobAvg, stateAvg: stateAvg, countryAvg: countryAvg });
 });
 
@@ -645,4 +650,121 @@ app.get("/blockchainpart", async (request, response) => {
   const encrypted = CryptoJS.SHA256(data).toString(CryptoJS.enc.Hex);
   const Owner = responseValues[0].PC_Chat_Log.split(" ")[0];
   response.send({ iD: c, chatData: encrypted, owner: Owner });
+});
+
+app.get("/kycdetails", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const date = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+  });
+  const instquery = `
+          INSERT INTO KYC_SCORECARD
+          (Customer_ID,KSC_Start_Time)
+          VALUES
+          ('${c}','${date}')
+      `;
+  const dbResponse1 = await db.run(instquery);
+  response.send("OK");
+});
+
+app.get("/storeKYC", async (request, response) => {
+  const { kyclog = "" } = request.query;
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const date = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+  });
+  const msg = kyclog.split(" ");
+  const totalavg = (parseInt(msg[0]) + parseInt(msg[1]) + parseInt(msg[2])) / 3;
+  const instquery = `
+              UPDATE KYC_SCORECARD
+              SET BC_End_Time='${date}',Overall_Score='${totalavg}',DOB_KYC_Score_ID='${parseInt(
+    msg[0]
+  )}' , AddressState_KYC_Score_ID='${parseInt(
+    msg[1]
+  )}',AddressCountry_KYC_Score_ID='${parseInt(msg[2])}'
+              WHERE Customer_ID=${c};
+          `;
+  const dbResponse1 = await db.run(instquery);
+  response.send("OK");
+});
+
+app.get("/transactiondetails", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const date = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+  });
+  const instquery = `
+          INSERT INTO BLOCKCHAIN_COMMIT
+          (NB_ID,BC_Start_Time)
+          VALUES
+          ('${c}','${date}')
+      `;
+  const dbResponse1 = await db.run(instquery);
+  response.send("OK");
+});
+
+app.get("/storeTD", async (request, response) => {
+  const { translog = "" } = request.query;
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const date = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+  });
+  const msg = translog.split(" ");
+  const instquery = `
+                UPDATE BLOCKCHAIN_COMMIT
+                SET BC_End_Time='${date}',BC_Status=1,TXN_HASH_ID='${msg}'
+                WHERE NB_ID=${c};
+            `;
+  const dbResponse1 = await db.run(instquery);
+  response.send("OK");
+});
+
+app.get("/a", async (request, response) => {
+  const getUserDetails = `
+    SELECT
+      *
+    FROM
+      kyc_scorecard
+    `;
+  const userArray = await db.all(getUserDetails);
+  response.send(userArray);
+});
+
+app.get("/b", async (request, response) => {
+  const getUserDetails = `
+    SELECT
+      *
+    FROM
+      BLOCKCHAIN_COMMIT
+    `;
+  const userArray = await db.all(getUserDetails);
+  response.send(userArray);
 });

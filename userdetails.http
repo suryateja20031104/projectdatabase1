@@ -21,3 +21,18 @@ GET http://localhost:3000/storeNwtchat/?chatlog=1234
 ###
 
 GET http://localhost:3000/blockchainpart
+
+###
+GET http://localhost:3000/kycdetails
+
+###
+GET http://localhost:3000/storeKYC/?kyclog=0 100 100
+
+###
+GET http://localhost:3000/transactiondetails
+
+###
+GET http://localhost:3000/storeTD/?translog=kjgsadfkjasdklajhdaslkdasdklasdlka  
+
+###
+GET http://localhost:3000/p
