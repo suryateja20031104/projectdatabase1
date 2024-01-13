@@ -113,11 +113,9 @@ app.get("/getCountSearch", async (request, response) => {
         FROM
             searchqueries
         WHERE
-            Nb_Status = 1
+            NB_Status = 1
             AND PC_Status = 1
-            AND KSC_Status = 1
-            AND BC_Status = 1
-            AND WC_Status = 1;
+            AND BC_Status = 1;
     `;
   const searchResponse = await db.all(getSearchCount);
   const searchComplete = await db.all(getCompSearchCount);
