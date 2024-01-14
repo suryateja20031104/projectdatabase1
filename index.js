@@ -103,9 +103,7 @@ app.get("/getCountSearch", async (request, response) => {
             WHERE
             Nb_Status = 0
             OR PC_Status = 0
-            OR KSC_Status = 0
-            OR BC_Status = 0
-            OR WC_Status = 0;
+            OR BC_Status = 0;
         `;
   const getCompSearchCount = `
         SELECT
@@ -113,7 +111,7 @@ app.get("/getCountSearch", async (request, response) => {
         FROM
             searchqueries
         WHERE
-            NB_Status = 1
+            Nb_Status = 1
             AND PC_Status = 1
             AND BC_Status = 1;
     `;
@@ -765,4 +763,23 @@ app.get("/b", async (request, response) => {
     `;
   const userArray = await db.all(getUserDetails);
   response.send(userArray);
+});
+
+app.get("/finalUpdate", async (request, response) => {
+  const getCount = `
+  SELECT
+    count(*) AS C
+  FROM
+    searchqueries;`;
+  const dbResponse = await db.all(getCount);
+  const c = dbResponse[0].C;
+  const update = `
+          UPDATE searchqueries
+          SET Nb_Status = 1,PC_Status = 1,BC_Status = 1
+          WHERE S_ID=${c}
+          ;
+      `;
+  const finalArray = await db.run(update);
+  response.send("OK");
+  //   console.log(c);
 });
